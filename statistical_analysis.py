@@ -44,7 +44,7 @@ def stats_analyzer(data_frame):
             plt.ylabel(numeric_df.columns[filtered_feature_index])
             plt.show()
 
-            # ASks User if they want to comapre two specific songs
+             # Asks User if they want to compare two specific songs
             compare_songs = input("Do you want to compare specific songs? (yes/no): ")
             while not functions.yes_or_no(compare_songs):
                 compare_songs = input("Invalid response. Please answer with yes or no: ")
@@ -59,15 +59,35 @@ def stats_analyzer(data_frame):
                         valid_songs = True
                     else:
                         print("One or both of the songs are not in the dataset. Please choose again.")
+                
                 # Fetch details of the songs
                 song1_details = data_frame[data_frame['song_name'] == song1].iloc[0]
                 song2_details = data_frame[data_frame['song_name'] == song2].iloc[0]
 
+                # Plot spider chart for comparison
+                categories = list(numeric_df.columns)
+                values_song1 = list(song1_details[numeric_df.columns])
+                values_song2 = list(song2_details[numeric_df.columns])
+
+                num_categories = len(categories)
+                angles = [n / float(num_categories) * 2 * pi for n in range(num_categories)]
+                angles += angles[:1]
+
+                ax = plt.subplot(111, polar=True)
+                plt.xticks(angles[:-1], categories, color='grey', size=8)
+                ax.plot(angles, values_song1, linewidth=1, linestyle='solid', label=song1)
+                ax.fill(angles, values_song1, 'b', alpha=0.1)
+                ax.plot(angles, values_song2, linewidth=1, linestyle='solid', label=song2)
+                ax.fill(angles, values_song2, 'r', alpha=0.1)
+                plt.title(f"Comparison of {song1} and {song2}")
+                plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
+                plt.show()
+
                 print("\nComparison:")
-                for column in numeric_df.columns:
-                    if song1_details[column] > song2_details[column]:
-                        print(f"{song1} prevails in {column}")
-                    elif song1_details[column] < song2_details[column]:
-                        print(f"{song2} prevails in {column}")
+                for i, category in enumerate(categories):
+                    if values_song1[i] > values_song2[i]:
+                        print(f"{song1} prevails in {category}")
+                    elif values_song1[i] < values_song2[i]:
+                        print(f"{song2} prevails in {category}")
                     else:
-                        print(f"{song1} and {song2} have the same {column}")
+                        print(f"{song1} and {song2} have the same {category}")
