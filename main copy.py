@@ -1,8 +1,24 @@
 import numpy as np
 import pandas as pd
 
-def filter_songs_genre(genre):
-    songs_with_genre = meta_data[meta_data['track_genre'] == genre]['track_name']
+def filter_songs_genre():
+    unique_genres = meta_data['track_genre'].unique()
+    print("Select a genre from the options:")
+   
+    print("Select a genre from the options:")
+    # Printing numbered list of genres
+    for index, genre in enumerate(unique_genres, start=1):
+        print(f"{index}. {genre}")
+
+    input_valid=False
+    while not input_valid:
+        genre_input=input("Please enter the genre you want to filter.").lower()
+        
+        if genre_input not in unique_genres:
+            print("The entered genre is not present in the dataset.")
+        else:
+            input_valid = True    
+    songs_with_genre = meta_data[meta_data['track_genre'] == genre_input]['track_name']
     for song in songs_with_genre:
         print(song)    
 def filter_songs_artist(artist):
@@ -155,19 +171,4 @@ if int(filter_attribute)==5:
     print(filtered_data[['track_name', 'duration_min_sec']])
     
 if int(filter_attribute)==6:
-    unique_genres = meta_data['track_genre'].unique()
-    print("Select a genre from the options:")
-    # Printing numbered list of genres
-    for index, genre in enumerate(unique_genres, start=1):
-        print(f"{index}. {genre}")
-
-    input_valid=False
-    while not input_valid:
-        genre_input=input("Please enter the genre you want to filter.").lower()
-        
-        if genre_input not in unique_genres:
-            print("The entered genre is not present in the dataset.")
-        else:
-            input_valid = True
-    
-    filter_songs_genre(genre_input)
+    filter_songs_genre()
