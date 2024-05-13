@@ -18,7 +18,7 @@ def filter_songs_genre():
         else:
             input_valid = True
     
-    songs_with_genre = meta_data[meta_data['track_genre'] == genre_input]['track_name'].tolist()
+    songs_with_genre = meta_data[meta_data['track_genre'] == genre_input]
     
     return songs_with_genre
 
@@ -38,7 +38,7 @@ def filter_songs_artist():
         else:
             input_valid = True
             
-    songs_with_artist = meta_data[meta_data['artists'] == artist_input]['track_name'].tolist()
+    songs_with_artist = meta_data[meta_data['artists'] == artist_input]
     
     return songs_with_artist
 
@@ -58,7 +58,7 @@ def filter_songs_albums():
         else:
             input_valid = True
         
-    songs_with_album = meta_data[meta_data['album_name'] == album_input]['track_name'].tolist()
+    songs_with_album = meta_data[meta_data['album_name'] == album_input]
     
     return songs_with_album
 
@@ -100,9 +100,9 @@ def filter_songs_popularity(meta_data):
     # Filter the DataFrame based on user-selected popularity category
     selected_popularity_category = popularity_labels[int(popularity_input) - 1]
     filtered_data = meta_data[meta_data['popularity_category'] == selected_popularity_category]
-
+    
     # Return an array with songs in the selected popularity bin
-    return filtered_data['track_name'].tolist()
+    return filtered_data
 
 def filter_songs_duration(meta_data):
     meta_data = meta_data.copy()
@@ -144,7 +144,7 @@ def filter_songs_duration(meta_data):
     filtered_data = meta_data[meta_data['duration_category'] == selected_duration_category]
 
     # Return an array with songs in the selected duration category
-    return filtered_data['track_name'].tolist()
+    return filtered_data
         
 data = pd.read_csv('downloads/dataset.csv')
 meta_data = data[['track_id', 'artists', 'track_name', 'album_name', 'popularity', 'duration_ms', 'track_genre']]
