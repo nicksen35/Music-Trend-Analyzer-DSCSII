@@ -1,7 +1,7 @@
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-from ipywidgets import widgets
+#import seaborn as sns
+#import matplotlib.pyplot as plt
+#from ipywidgets import widgets
 import functions
 
 def stats_analyzer(data_frame):
