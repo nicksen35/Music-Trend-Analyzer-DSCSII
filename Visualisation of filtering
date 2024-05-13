@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
-def plot_genre_counts(meta_data):
+def plot_genre_barchart(meta_data):
     unique_genres = meta_data['track_genre'].unique()
     
     input_valid=False
@@ -17,7 +16,7 @@ def plot_genre_counts(meta_data):
             input_valid = True  
             
     genres_to_compare=[]
-    for i in range(0,num_of_genres):
+    for i in range(0,int(num_of_genres)):
         input_valid = False
         while not input_valid:
             genre_input = input("Please enter one of the genres you want to filter ").lower()
@@ -27,7 +26,9 @@ def plot_genre_counts(meta_data):
             else:
                 genres_to_compare.append(genre_input)
                 input_valid = True        
-        
+    
+        genre_counts = meta_data[meta_data['track_genre'].isin(genres_to_compare)]['track_genre'].value_counts() #thank you chatGPT
+
     
     plt.figure(figsize=(10, 6))
     genre_counts.plot(kind='bar')
@@ -37,6 +38,7 @@ def plot_genre_counts(meta_data):
     plt.xticks(rotation=45, ha='right')  # Rotate x-axis labels for better readability
     plt.tight_layout()
     plt.show()
+    
 data = pd.read_csv('downloads/dataset.csv')
 meta_data = data[['track_id', 'artists', 'track_name', 'album_name', 'popularity', 'duration_ms', 'track_genre']]
 music_data = data[['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'time_signature']]
@@ -46,4 +48,4 @@ print(music_data.head())
 
 
 
-plot_genre_counts(meta_data)
+plot_genre_barchart(meta_data)
