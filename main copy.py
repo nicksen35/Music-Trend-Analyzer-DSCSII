@@ -23,6 +23,39 @@ def filter_songs_genre():
     return songs_with_genre
 
 def filter_songs_artist():
+    input_valid = True    
+    songs_with_genre = meta_data[meta_data['track_genre'] == genre_input]['track_name']
+    for song in songs_with_genre:
+        print(song)    
+def filter_songs_artist(artist):
+    songs_with_artist= meta_data[meta_data['artists'] == artist]['track_name']
+    for song in songs_with_artist:
+        print(song)    
+        print(song)    
+def filter_songs_albums(album):
+    songs_with_album= meta_data[meta_data['album_name'] == album]['track_name']
+    for song in songs_with_album:
+        print(song)    
+
+        
+data = pd.read_csv('downloads/dataset.csv')
+meta_data = data[['track_id', 'artists', 'track_name', 'album_name', 'popularity', 'duration_ms', 'track_genre']]
+music_data = data[['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'time_signature']]
+print(meta_data.head())
+print(music_data.head())
+
+input_valid=False
+while not input_valid:
+    filter_attribute = input("Please enter which attribute you wish to filter the songs by: 1 for artists, 2 for words, 3 for album_name, 4 for popularity, 5 for duration_ms or 6 for track_genre: ")
+    
+    if not filter_attribute.isnumeric():
+        print("Please enter numbers only.")
+    elif not 1 <= int(filter_attribute) <= 6:
+        print("Please enter numbers between 1 and 6 only.")
+    else:
+        input_valid = True
+
+if int(filter_attribute)==1:
     unique_artists = meta_data['artists'].unique()
     print("Select an artist from the options:")
     # Printing numbered list of artists
@@ -39,10 +72,24 @@ def filter_songs_artist():
             input_valid = True
             
     songs_with_artist = meta_data[meta_data['artists'] == artist_input]
-    
-    return songs_with_artist
+
 
 def filter_songs_albums():
+    
+    filter_songs_artist(artist_input)
+
+if int(filter_attribute)==2:
+    unique_tracks = meta_data['track_name'].unique()
+    select_word = input("Type a word that you want the following song titles to contain:")
+    selected_tracks = []
+    for track_name in unique_tracks:
+        if select_word.lower() in track_name.lower():
+            selected_tracks.append(track_name)
+    print("Songs containing the word '{}' in their title:".format(select_word))
+    for track_name in selected_tracks:
+        print(track_name)
+
+if int(filter_attribute)==3:
     unique_albums = meta_data['album_name'].unique()
     print("Select an album from the options:")
     # Printing numbered list of albums
@@ -59,8 +106,7 @@ def filter_songs_albums():
             input_valid = True
         
     songs_with_album = meta_data[meta_data['album_name'] == album_input]
-    
-    return songs_with_album
+
 
 def filter_songs_popularity(meta_data):
     print("""Filter popularity:

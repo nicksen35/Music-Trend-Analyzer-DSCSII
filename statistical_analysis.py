@@ -6,7 +6,6 @@ import functions
 
 def stats_analyzer(data_frame):
     copy_of_data_frame = data_frame.copy()
-    print(copy_of_data_frame)
     numeric_df = copy_of_data_frame[['popularity', 'duration_ms', 'danceability', 'energy', 'loudness', 
                     'speechiness', 'acousticness', 'instrumentalness', 'liveness', 
                     'valence', 'tempo']]
@@ -44,50 +43,32 @@ def stats_analyzer(data_frame):
             plt.ylabel(numeric_df.columns[filtered_feature_index])
             plt.show()
 
-             # Asks User if they want to compare two specific songs
-            compare_songs = input("Do you want to compare specific songs? (yes/no): ")
-            while not functions.yes_or_no(compare_songs):
-                compare_songs = input("Invalid response. Please answer with yes or no: ")
-            if compare_songs.lower() in ['yes', 'y']:
-                valid_songs = False
-                while not valid_songs:
-                    song1 = input("Enter the name of the first song: ")
-                    song2 = input("Enter the name of the second song: ")
+def popularity_filter(meta_data):
+    print("Filter popularity:")
+    for i in range(1, 11):
+        print(f"Select {i} for {i * 10 - 9}-{i * 10}")
 
-                    # Check if the songs exist in the DataFrame
-                    if (song1 in data_frame['song_name'].values) and (song2 in data_frame['song_name'].values):
-                        valid_songs = True
-                    else:
-                        print("One or both of the songs are not in the dataset. Please choose again.")
-                
-                # Fetch details of the songs
-                song1_details = data_frame[data_frame['song_name'] == song1].iloc[0]
-                song2_details = data_frame[data_frame['song_name'] == song2].iloc[0]
+    input_valid = False
+    while not input_valid:
+        popularity_input = input("Please enter the corresponding number for popularity you want to filter: ")
+        if not popularity_input.isnumeric():
+            print("Please enter numbers only.")
+        elif not 1 <= int(popularity_input) <= 10:
+            print("Please enter numbers between 1 and 10 only.")
+        else:
+            input_valid = True
 
-                # Plot spider chart for comparison
-                categories = list(numeric_df.columns)
-                values_song1 = list(song1_details[numeric_df.columns])
-                values_song2 = list(song2_details[numeric_df.columns])
+    # Define the bins for popularity ranges
+    popularity_bins = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    popularity_labels = ['0-10', '11-20', '21-30', '31-40', '41-50', '51-60', '61-70', '71-80', '81-90', '91-100']
 
-                num_categories = len(categories)
-                angles = [n / float(num_categories) * 2 * pi for n in range(num_categories)]
-                angles += angles[:1]
+    # Categorize songs based on their popularity
+    meta_data['popularity_category'] = pd.cut(meta_data['popularity'], bins=popularity_bins, labels=popularity_labels,
+                                               include_lowest=True)
+    # Filter the DataFrame based on user-selected popularity category
+    selected_popularity_category = popularity_labels[int(popularity_input) - 1]
+    filtered_data = meta_data[meta_data['popularity_category'] == selected_popularity_category]
 
-                ax = plt.subplot(111, polar=True)
-                plt.xticks(angles[:-1], categories, color='grey', size=8)
-                ax.plot(angles, values_song1, linewidth=1, linestyle='solid', label=song1)
-                ax.fill(angles, values_song1, 'b', alpha=0.1)
-                ax.plot(angles, values_song2, linewidth=1, linestyle='solid', label=song2)
-                ax.fill(angles, values_song2, 'r', alpha=0.1)
-                plt.title(f"Comparison of {song1} and {song2}")
-                plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
-                plt.show()
-
-                print("\nComparison:")
-                for i, category in enumerate(categories):
-                    if values_song1[i] > values_song2[i]:
-                        print(f"{song1} prevails in {category}")
-                    elif values_song1[i] < values_song2[i]:
-                        print(f"{song2} prevails in {category}")
-                    else:
-                        print(f"{song1} and {song2} have the same {category}")
+    # Print the filtered DataFrame
+    print("Songs in the selected popularity category:")
+    print(filtered_data[['track_name', 'popularity']])
