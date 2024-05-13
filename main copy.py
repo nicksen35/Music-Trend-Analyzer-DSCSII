@@ -1,35 +1,66 @@
 import numpy as np
 import pandas as pd
 
-def filter_songs_genre():
+def filter_songs_genre(meta_data):
     unique_genres = meta_data['track_genre'].unique()
     print("Select a genre from the options:")
-   
-    print("Select a genre from the options:")
+    
     # Printing numbered list of genres
     for index, genre in enumerate(unique_genres, start=1):
         print(f"{index}. {genre}")
 
-    input_valid=False
+    input_valid = False
     while not input_valid:
-        genre_input=input("Please enter the genre you want to filter.").lower()
+        genre_input = input("Please enter the genre you want to filter: ").lower()
         
         if genre_input not in unique_genres:
             print("The entered genre is not present in the dataset.")
         else:
-            input_valid = True    
-    songs_with_genre = meta_data[meta_data['track_genre'] == genre_input]['track_name']
-    for song in songs_with_genre:
-        print(song)    
-def filter_songs_artist(artist):
-    songs_with_artist= meta_data[meta_data['artists'] == artist]['track_name']
-    for song in songs_with_artist:
-        print(song)    
-        print(song)    
-def filter_songs_albums(album):
-    songs_with_album= meta_data[meta_data['album_name'] == album]['track_name']
-    for song in songs_with_album:
-        print(song)    
+            input_valid = True
+    
+    songs_with_genre = meta_data[meta_data['track_genre'] == genre_input]['track_name'].tolist()
+    
+    return songs_with_genre
+
+def filter_songs_artist(meta_data):
+    unique_artists = meta_data['artists'].unique()
+    print("Select an artist from the options:")
+    # Printing numbered list of artists
+    for index, artist in enumerate(unique_artists, start=1):
+        print(f"{index}. {artist}")
+
+    input_valid = False
+    while not input_valid:
+        artist_input = input("Please enter the artist you want to filter: ")
+        
+        if artist_input not in unique_artists:
+            print("The entered artist is not present in the dataset.")
+        else:
+            input_valid = True
+            
+    songs_with_artist = meta_data[meta_data['artists'] == artist_input]['track_name'].tolist()
+    
+    return songs_with_artist
+
+def filter_songs_albums(meta_data):
+    unique_albums = meta_data['album_name'].unique()
+    print("Select an album from the options:")
+    # Printing numbered list of albums
+    for index, album in enumerate(unique_albums, start=1):
+        print(f"{index}. {album}")
+
+    input_valid = False
+    while not input_valid:
+        album_input = input("Please enter the album you want to filter: ")
+        
+        if album_input not in unique_albums:
+            print("The entered album is not present in the dataset.")
+        else:
+            input_valid = True
+        
+    songs_with_album = meta_data[meta_data['album_name'] == album_input]['track_name'].tolist()
+    
+    return songs_with_album
 
         
 data = pd.read_csv('downloads/dataset.csv')
@@ -50,39 +81,9 @@ while not input_valid:
         input_valid = True
 
 if int(filter_attribute)==1:
-    unique_artists = meta_data['artists'].unique()
-    print("Select an artist from the options:")
-    # Printing numbered list of artists
-    for index, artist in enumerate(unique_artists, start=1):
-        print(f"{index}. {artist}")
-
-    input_valid=False
-    while not input_valid:
-        artist_input=input("Please enter the artist you want to filter.")
-        
-        if artist_input not in unique_artists:
-            print("The entered artist is not present in the dataset.")
-        else:
-            input_valid = True
-    
-    filter_songs_artist(artist_input)
+    filter_songs_artist()
 
 if int(filter_attribute)==3:
-    unique_albums = meta_data['album_name'].unique()
-    print("Select an album from the options:")
-    # Printing numbered list of albums
-    for index, album in enumerate(unique_albums, start=1):
-        print(f"{index}. {album}")
-
-    input_valid=False
-    while not input_valid:
-        album_input=input("Please enter the album you want to filter.")
-        
-        if album_input not in unique_albums:
-            print("The entered album is not present in the dataset.")
-        else:
-            input_valid = True
-    
     filter_songs_albums(album_input)
     
 if int(filter_attribute)==4: 
