@@ -23,7 +23,7 @@ def filter_songs_genre():
     return songs_with_genre
 
 def filter_songs_artist():
-            input_valid = True    
+    input_valid = True    
     songs_with_genre = meta_data[meta_data['track_genre'] == genre_input]['track_name']
     for song in songs_with_genre:
         print(song)    
@@ -72,8 +72,7 @@ if int(filter_attribute)==1:
             input_valid = True
             
     songs_with_artist = meta_data[meta_data['artists'] == artist_input]
-    
-    return songs_with_artist
+
 
 def filter_songs_albums():
     
@@ -107,8 +106,7 @@ if int(filter_attribute)==3:
             input_valid = True
         
     songs_with_album = meta_data[meta_data['album_name'] == album_input]
-    
-    return songs_with_album
+
 
 def filter_songs_popularity(meta_data):
     print("""Filter popularity:
