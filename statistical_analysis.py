@@ -43,3 +43,31 @@ def stats_analyzer(data_frame):
             plt.title(f"Box Plot of {numeric_df.columns[filtered_feature_index]}")
             plt.ylabel(numeric_df.columns[filtered_feature_index])
             plt.show()
+
+            # ASks User if they want to comapre two specific songs
+            compare_songs = input("Do you want to compare specific songs? (yes/no): ")
+            while not functions.yes_or_no(compare_songs):
+                compare_songs = input("Invalid response. Please answer with yes or no: ")
+            if compare_songs.lower() in ['yes', 'y']:
+                valid_songs = False
+                while not valid_songs:
+                    song1 = input("Enter the name of the first song: ")
+                    song2 = input("Enter the name of the second song: ")
+
+                    # Check if the songs exist in the DataFrame
+                    if (song1 in data_frame['song_name'].values) and (song2 in data_frame['song_name'].values):
+                        valid_songs = True
+                    else:
+                        print("One or both of the songs are not in the dataset. Please choose again.")
+                # Fetch details of the songs
+                song1_details = data_frame[data_frame['song_name'] == song1].iloc[0]
+                song2_details = data_frame[data_frame['song_name'] == song2].iloc[0]
+
+                print("\nComparison:")
+                for column in numeric_df.columns:
+                    if song1_details[column] > song2_details[column]:
+                        print(f"{song1} prevails in {column}")
+                    elif song1_details[column] < song2_details[column]:
+                        print(f"{song2} prevails in {column}")
+                    else:
+                        print(f"{song1} and {song2} have the same {column}")
