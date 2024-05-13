@@ -6,7 +6,6 @@ import functions
 
 def stats_analyzer(data_frame):
     copy_of_data_frame = data_frame.copy()
-    print(copy_of_data_frame)
     numeric_df = copy_of_data_frame[['popularity', 'duration_ms', 'danceability', 'energy', 'loudness', 
                     'speechiness', 'acousticness', 'instrumentalness', 'liveness', 
                     'valence', 'tempo']]
@@ -43,3 +42,33 @@ def stats_analyzer(data_frame):
             plt.title(f"Box Plot of {numeric_df.columns[filtered_feature_index]}")
             plt.ylabel(numeric_df.columns[filtered_feature_index])
             plt.show()
+
+def popularity_filter(meta_data):
+    print("Filter popularity:")
+    for i in range(1, 11):
+        print(f"Select {i} for {i * 10 - 9}-{i * 10}")
+
+    input_valid = False
+    while not input_valid:
+        popularity_input = input("Please enter the corresponding number for popularity you want to filter: ")
+        if not popularity_input.isnumeric():
+            print("Please enter numbers only.")
+        elif not 1 <= int(popularity_input) <= 10:
+            print("Please enter numbers between 1 and 10 only.")
+        else:
+            input_valid = True
+
+    # Define the bins for popularity ranges
+    popularity_bins = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    popularity_labels = ['0-10', '11-20', '21-30', '31-40', '41-50', '51-60', '61-70', '71-80', '81-90', '91-100']
+
+    # Categorize songs based on their popularity
+    meta_data['popularity_category'] = pd.cut(meta_data['popularity'], bins=popularity_bins, labels=popularity_labels,
+                                               include_lowest=True)
+    # Filter the DataFrame based on user-selected popularity category
+    selected_popularity_category = popularity_labels[int(popularity_input) - 1]
+    filtered_data = meta_data[meta_data['popularity_category'] == selected_popularity_category]
+
+    # Print the filtered DataFrame
+    print("Songs in the selected popularity category:")
+    print(filtered_data[['track_name', 'popularity']])
