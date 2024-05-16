@@ -1,0 +1,110 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from math import pi
+
+# Read the CSV file
+data = pd.read_csv('downloads/dataset.csv')
+
+# Selecting relevant attributes
+attributes = ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
+
+def get_song_data(track_name):
+    """
+    Retrieve the music attributes for a given track name.
+    
+    Parameters:
+    - track_name: The name of the track to retrieve data for
+    
+    Returns:
+    - song_data: DataFrame row containing the song data if found, otherwise None
+    """
+    # Check if the track name exists in the dataset
+    song_data = data[data['track_name'].str.lower() == track_name.lower()]
+    if not song_data.empty:
+        return song_data
+    else:
+        return None
+
+def normalize_data(song_data, attributes):
+    """
+    Normalize the song data attributes to be between 0 and 1.
+    
+    Parameters:
+    - song_data: DataFrame row containing the song data
+    - attributes: List of attributes to normalize
+    
+    Returns:
+    - normalized_values: List of normalized attribute values
+    """
+    normalized_values = []
+    for attr in attributes:
+        if attr == 'loudness':  # Normalizing loudness separately
+            max_value = data[attr].max()
+            min_value = data[attr].min()
+            normalized_value = (song_data[attr].values[0] - min_value) / (max_value - min_value)
+        else:
+            max_value = data[attr].max()
+            min_value = data[attr].min()
+            normalized_value = (song_data[attr].values[0] - min_value) / (max_value - min_value)
+        normalized_values.append(normalized_value)
+    return normalized_values
+
+def plot_spider_chart(song_data):
+    """
+    Plot a spider chart for the given song data.
+    
+    Parameters:
+    - song_data: DataFrame row containing the song data
+    """
+    # Normalize the values for the relevant attributes
+    values = normalize_data(song_data, attributes)
+    
+    # Number of variables
+    num_vars = len(attributes)
+
+    # Compute angle of each axis
+    angles = [n / float(num_vars) * 2 * pi for n in range(num_vars)]
+    angles += angles[:1]  # Complete the loop
+
+    # Append the first value to values to close the loop
+    values += values[:1]
+
+    # Initialise the spider plot
+    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
+
+    # Draw one axe per variable + add labels
+    plt.xticks(angles[:-1], attributes)
+
+    # Draw y-labels
+    plt.yticks([0.2, 0.4, 0.6, 0.8, 1.0], ['0.2', '0.4', '0.6', '0.8', '1.0'], color='grey', size=7)
+    plt.ylim(0, 1)
+
+    # Plot data
+    ax.plot(angles, values, linewidth=1, linestyle='solid')
+
+    # Fill area
+    ax.fill(angles, values, 'b', alpha=0.1)
+
+    # Show the plot
+    plt.title(f"Attributes of '{song_data['track_name'].values[0]}'")
+    plt.show()
+
+def main():
+    # Prompt user to input a track name
+    input_valid = False
+    while not input_valid:
+        track_name_input = input("Please enter the track name: ")
+        
+        # Validate the input track name
+        if track_name_input not in data['track_name'].values:
+            print("The entered track name is not present in the dataset. Please try again.")
+        else:
+            input_valid = True
+            song_data = get_song_data(track_name_input)
+
+    # Plot spider chart for the valid song data
+    plot_spider_chart(song_data)
+
+# Example usage
+main()
