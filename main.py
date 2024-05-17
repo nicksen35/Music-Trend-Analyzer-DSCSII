@@ -126,6 +126,3 @@ def interface():
             print("Invalid choice. Please choose a valid option.")
 
 interface()
-
-#functions.filter_songs_by_attributes(meta_data)
-#functions.statistical_analysis.stats_analyzer(data)
