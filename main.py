@@ -12,17 +12,7 @@ print(data.columns.tolist())
 #statistical_analysis.stats_analyzer(data)
 meta_data = data[['track_id', 'artists', 'track_name', 'album_name', 'popularity', 'duration_ms', 'track_genre']]
 
-unique_tracks = meta_data['track_name'].unique()
-select_word = input("Type a word that you want the following song titles to contain:")
-selected_tracks = []
-for track_name in unique_tracks:
-    if not type(track_name) is float:
-        if select_word.lower() in track_name.lower():
-            selected_tracks.append(track_name)
 
-print("Songs containing the word '{}' in their title:".format(select_word))
-for track_name in selected_tracks:
-    print(track_name)
 data = pd.read_csv('./data/dataset.csv')
 meta_data = data[['artists', 'track_name', 'album_name', 'popularity', 'duration_ms', 'track_genre']]
 music_data = data[['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'time_signature']]
@@ -56,11 +46,15 @@ def interface():
         if primary_choice == 1:  # Music Data (Text)
             music_data_choice = ask_user_input(music_data_options)
             if music_data_choice == 1:  # Show Data by Filter
-                #music_data_filter = music_data_filter(meta_data)
+                music_data_filter = functions.filter_songs_by_attributes(meta_data)
+                
                 pass
             elif music_data_choice == 2:  # Search for Song Information
-                # Implement search functionality for song information
-                pass
+                word_to_search = functions.get_valid_string("What word do you wish to search a song with? ")
+                songs_with_words = functions.find_tracks_with_word(meta_data, word_to_search)
+                for i in songs_with_words:
+                    print("Song Title:", i)
+                print(f"Amount of Songs with Word '{word_to_search.capitalize()}':", len(songs_with_words))
             elif music_data_choice == 3:  # Song Comparisons
                 #Implement Functionality
                 pass
@@ -73,17 +67,18 @@ def interface():
                 # Perform comparison visualization (e.g., Scatter Plots, Radar Chart)
             elif visualization_choice == 3:  # Five-Point Summary
                 summary_type = ask_user_input(five_ps_visualization)
-                # Perform visualization for Five-Point Summary (e.g., Histogram, Box-Plot)
+                if summary_type == 1:
+                    print("Histograms...")
+                elif summary_type == 2:
+                    print("Box Plot..")
         elif primary_choice == 3:  # Visuals and Text
             visuals_text_choice = ask_user_input(visuals_and_text_options)
+
             # Implement functionality based on chosen option (similar to the above cases)
         else:
             print("Invalid choice. Please choose a valid option.")
 
 interface()
 
-
-
-interface()
 #functions.filter_songs_by_attributes(meta_data)
 #functions.statistical_analysis.stats_analyzer(data)

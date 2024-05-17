@@ -130,7 +130,16 @@ def filter_songs_by_attributes(meta_data):
             else:
                 input_valid = True
         filter_songs_artist(artist_input, meta_data)
-
+    elif int(filter_attribute) == 2:
+        unique_track_names = meta_data['track_name'].unique()
+        input_valid = False
+        while not input_valid:
+            track_names_input = input("Please enter the track names you want to filter (Part of a Word or Whole Track): ")
+            if track_names_input not in unique_track_names:
+                print("The entered track name is not present in the dataset.")
+            else:
+                input_valid = True
+        tracks = find_tracks_with_word(meta_data, track_names_input)
     elif int(filter_attribute) == 3:
         unique_albums = meta_data['album_name'].unique()
         print("Select an album from the options:")
@@ -154,3 +163,33 @@ def filter_songs_by_attributes(meta_data):
         filter_songs_genre()
 
 
+def find_tracks_with_word(meta_data, select_word):
+    """
+    Finds tracks with titles containing the specified word.
+
+    Args:
+        meta_data (DataFrame): DataFrame containing track metadata, including 'track_name'.
+        select_word (str): Word to search for within the track titles.
+
+    Returns:
+        list: List of track titles containing the specified word.
+    """
+    unique_tracks = meta_data['track_name'].unique()
+    selected_tracks = []
+    
+    for track_name in unique_tracks:
+        if not isinstance(track_name, float):  # Ensure the track name is not NaN
+            if select_word.lower() in track_name.lower():
+                selected_tracks.append(track_name)
+    
+    return selected_tracks
+
+
+
+def get_valid_string(prompt):
+    while True:
+        user_input = input(prompt)
+        if isinstance(user_input, str) and user_input.isalpha():
+            return user_input
+        else:
+            print("Invalid input. Please enter a valid word (alphabetic characters only).")

@@ -3,7 +3,7 @@ import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 
-data = pd.read_csv('downloads/dataset.csv')
+data = pd.read_csv('./Data/dataset.csv')
 meta_data = data[['track_id', 'artists', 'track_name', 'album_name', 'popularity', 'duration_ms', 'track_genre']]
 music_data = data[['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'time_signature']]
 combined_data = pd.concat([meta_data, music_data], axis=1)
