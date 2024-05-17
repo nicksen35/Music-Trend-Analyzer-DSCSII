@@ -8,9 +8,6 @@ meta_data = data[['track_id', 'artists', 'track_name', 'album_name', 'popularity
 music_data = data[['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'time_signature']]
 combined_data = pd.concat([meta_data, music_data], axis=1)
 
-print(meta_data.head())
-print(music_data.head())
-
 def attribute_popularity_plot():    
     print("Music attributes:", music_data.columns.tolist())
 
@@ -31,5 +28,3 @@ def attribute_popularity_plot():
     plt.ylabel('Popularity')
     plt.title(f'Effect of {music_attribute_input.capitalize()} on Popularity')
     plt.show()    
-attribute_popularity_plot()
-                

@@ -151,7 +151,7 @@ def filter_songs_by_attributes(meta_data):
                 print("The entered album is not present in the dataset.")
             else:
                 input_valid = True
-        filter_songs_albums(album_input)
+        filter_songs_albums(album_input, meta_data)
 
     elif int(filter_attribute) == 4:
         popularity_filter(meta_data)
@@ -160,7 +160,7 @@ def filter_songs_by_attributes(meta_data):
         duration_filter(meta_data)
 
     elif int(filter_attribute) == 6:
-        filter_songs_genre()
+        filter_songs_genre(meta_data)
 
 
 def find_tracks_with_word(meta_data, select_word):

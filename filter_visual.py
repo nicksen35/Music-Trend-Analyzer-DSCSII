@@ -39,13 +39,3 @@ def plot_genre_barchart(meta_data):
     plt.tight_layout()
     plt.show()
     
-data = pd.read_csv('./data/dataset.csv')
-meta_data = data[['track_id', 'artists', 'track_name', 'album_name', 'popularity', 'duration_ms', 'track_genre']]
-music_data = data[['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'time_signature']]
-print(meta_data.head())
-print(music_data.head())
-
-
-
-
-plot_genre_barchart(meta_data)

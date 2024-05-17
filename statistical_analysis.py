@@ -4,16 +4,97 @@ import matplotlib.pyplot as plt
 from ipywidgets import widgets
 import functions
 
-def stats_analyzer(data_frame):
+def display_five_point_summary(data_frame, column_name):
+    """
+    Display the five-point summary for a given column in the DataFrame.
+    
+    Parameters:
+    - data_frame: The DataFrame containing the data
+    - column_name: The column for which to display the five-point summary
+    """
+    five_point_summary = data_frame[column_name].describe()
+    print("Five-Point Summary:")
+    print(five_point_summary)
+    
+    
+def display_box_plot(data_frame, column_name):
+    """
+    Display a box plot for a given column in the DataFrame.
+    
+    Parameters:
+    - data_frame: The DataFrame containing the data
+    - column_name: The column for which to display the box plot
+    """
+    plt.figure(figsize=(8, 6))
+    sns.boxplot(y=data_frame[column_name])
+    plt.title(f"Box Plot of {column_name}")
+    plt.ylabel(column_name)
+    plt.show()
+
+def display_histogram(data_frame, column_name):
+    """
+    Display a histogram for a given column in the DataFrame.
+    
+    Parameters:
+    - data_frame: The DataFrame containing the data
+    - column_name: The column for which to display the histogram
+    """
+    plt.figure(figsize=(8, 6))
+    sns.histplot(data_frame[column_name], kde=True)
+    plt.title(f"Histogram of {column_name}")
+    plt.xlabel(column_name)
+    plt.ylabel("Frequency")
+    plt.show()
+
+def display_summary_and_box_plot(data_frame, column_name):
+    """
+    Display both the five-point summary and box plot for a given column in the DataFrame.
+    
+    Parameters:
+    - data_frame: The DataFrame containing the data
+    - column_name: The column for which to display the summary and box plot
+    """
+    display_five_point_summary(data_frame, column_name)
+    display_box_plot(data_frame, column_name)
+
+def display_summary_box_plot_histogram(data_frame, column_name):
+    """
+    Display the five-point summary, box plot, and histogram for a given column in the DataFrame.
+    
+    Parameters:
+    - data_frame: The DataFrame containing the data
+    - column_name: The column for which to display the summary, box plot, and histogram
+    """
+    display_five_point_summary(data_frame, column_name)
+    display_box_plot(data_frame, column_name)
+    display_histogram(data_frame, column_name)
+
+def display_summary_histogram(data_frame, column_name):
+    display_five_point_summary(data_frame, column_name)
+    display_histogram(data_frame, column_name)
+    
+    
+def display_histogram_box_plot(data_frame, column_name):
+    display_box_plot(data_frame, column_name)
+    display_histogram(data_frame, column_name)
+    
+    
+def stats_analyzer(data_frame, user_choice):
+    """
+    Main function to prompt user for input and display five-point summary and/or box plot.
+    
+    Parameters:
+    - data_frame: The DataFrame containing the data
+    """
     copy_of_data_frame = data_frame.copy()
     numeric_df = copy_of_data_frame[['popularity', 'duration_ms', 'danceability', 'energy', 'loudness', 
-                    'speechiness', 'acousticness', 'instrumentalness', 'liveness', 
-                    'valence', 'tempo']]
+                                     'speechiness', 'acousticness', 'instrumentalness', 'liveness', 
+                                     'valence', 'tempo']]
     
     wants_fps = True
     while wants_fps:
         wants_fps_input = input("Do You Want to See Any Five-Point Summaries/Box Plots of Musical Data Based on a Genre? (yes/no): ")
-        while not functions.yes_or_no(wants_fps_input):
+        while wants_fps_input.lower() not in ['yes', 'y', 'no', 'n']:
             wants_fps_input = input("Not a Valid Response, Answer Yes or No If You Want to See a Five-Point Summary/Box Plot or Not (yes/no): ")
         wants_fps = wants_fps_input.lower() in ['yes', 'y']
 
@@ -31,17 +112,21 @@ def stats_analyzer(data_frame):
                     print("Invalid input. Please enter a valid number.")
 
             filtered_feature_index = int(filtered_feature_index) - 1
-            filtered_feature = numeric_df.iloc[:, filtered_feature_index]
-            
-            five_point_summary = filtered_feature.describe()
-            print("Five-Point Summary:")
-            print(five_point_summary)
-            
-            plt.figure(figsize=(8, 6))
-            sns.boxplot(y=filtered_feature)
-            plt.title(f"Box Plot of {numeric_df.columns[filtered_feature_index]}")
-            plt.ylabel(numeric_df.columns[filtered_feature_index])
-            plt.show()
+            filtered_feature = numeric_df.columns[filtered_feature_index]
+            if user_choice == 'Summary':
+                display_five_point_summary(numeric_df, filtered_feature)
+            elif user_choice == 'Box Plot':
+                display_box_plot(numeric_df, filtered_feature)
+            elif user_choice == 'Summary Box Plot':
+                display_summary_and_box_plot(numeric_df, filtered_feature)
+            elif user_choice == 'Histogram':
+                display_histogram(numeric_df, filtered_feature)
+            elif user_choice == "Histogram Box Plot":
+                display_histogram_box_plot(numeric_df, filtered_feature)   
+            elif user_choice == "Summary Histogram":
+                display_summary_histogram(numeric_df, filtered_feature)
+            elif user_choice == "Everything":
+                display_summary_box_plot_histogram(numeric_df, filtered_feature)
 
 def popularity_filter(meta_data):
     print("Filter popularity:")
