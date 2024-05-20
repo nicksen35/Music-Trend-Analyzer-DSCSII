@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from math import pi
+import time
 
 # Read the CSV file
 data = pd.read_csv('./Data/dataset.csv')
@@ -9,7 +10,7 @@ data = pd.read_csv('./Data/dataset.csv')
 # Selecting relevant attributes
 attributes = ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
 
-def get_song_data(track_name):
+def get_song_data(track_name): #Get the name of the song for radar chart
     """
     Retrieve the music attributes for a given track name and prompt the user to select 
     if multiple songs are found.
@@ -49,16 +50,8 @@ def get_song_data(track_name):
             print("Invalid input. Please enter a number.")
 
 
-def format_song_data(song_data):
-    """
-    Format the song data into a clean and formatted string.
+def format_song_data(song_data): #Format the Song Data into a Readable Format
     
-    Parameters:
-    - song_data: DataFrame row containing the song data
-    
-    Returns:
-    - formatted_data: String containing the formatted song data
-    """
     formatted_data = (
         f"\nSong Data:\n"
         f"Track Name: {song_data['track_name'].values[0]}\n"
@@ -76,37 +69,25 @@ def format_song_data(song_data):
     )
     return formatted_data
 
-def normalize_data(song_data, attributes):
-    """
-    Normalize the song data attributes to be between 0 and 1.
+def normalize_data(song_data, attributes): #Normalize the Attributes into acceptable data (Between 0 and 1)
     
-    Parameters:
-    - song_data: DataFrame row containing the song data
-    - attributes: List of attributes to normalize
     
-    Returns:
-    - normalized_values: List of normalized attribute values
-    """
     normalized_values = []
-    for attr in attributes:
+    for attr in attributes: #Handle Loudness Separately
         if attr == 'loudness':  # Normalizing loudness separately
             max_value = data[attr].max()
             min_value = data[attr].min()
-            normalized_value = (song_data[attr].values[0] - min_value) / (max_value - min_value)
+            normalized_value = (song_data[attr].values[0] - min_value) / (max_value - min_value) #Min Max Normalization
         else:
             max_value = data[attr].max()
             min_value = data[attr].min()
-            normalized_value = (song_data[attr].values[0] - min_value) / (max_value - min_value)
-        normalized_values.append(normalized_value)
+            normalized_value = (song_data[attr].values[0] - min_value) / (max_value - min_value) #Min-Max Normalization
+        normalized_values.append(normalized_value) #Append the Values to All Normalized Values
+        
     return normalized_values
 
-def plot_spider_chart(song_data):
-    """
-    Plot a spider chart for the given song data.
+def plot_spider_chart(song_data): #Plotting the Spider Chart Given Song Data
     
-    Parameters:
-    - song_data: DataFrame row containing the song data
-    """
     # Normalize the values for the relevant attributes
     values = normalize_data(song_data, attributes)
     
@@ -140,10 +121,53 @@ def plot_spider_chart(song_data):
     plt.title(f"Attributes of '{song_data['track_name'].values[0]}'")
     plt.show()
 
-def main(option):
+
+def plot_compare_spider_chart(song_data1, song_data2): #Plots Two Points of Data on a Single Spider Chart
+    
+    
+    # Normalize the values for the relevant attributes
+    values1 = normalize_data(song_data1, attributes)
+    values2 = normalize_data(song_data2, attributes)
+    
+    # Number of variables
+    num_vars = len(attributes)
+
+    # Compute angle of each axis
+    angles = [n / float(num_vars) * 2 * pi for n in range(num_vars)]
+    angles += angles[:1]  # Complete the loop
+
+    # Append the first value to values to close the loop
+    values1 += values1[:1]
+    values2 += values2[:1]
+
+    # Initialise the spider plot
+    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
+
+    # Draw one axe per variable + add labels
+    plt.xticks(angles[:-1], attributes)
+
+    # Draw y-labels
+    plt.yticks([0.2, 0.4, 0.6, 0.8, 1.0], ['0.2', '0.4', '0.6', '0.8', '1.0'], color='grey', size=7)
+    plt.ylim(0, 1)
+
+    # Plot data for song 1
+    ax.plot(angles, values1, linewidth=1, linestyle='solid', label=song_data1['track_name'].values[0])
+    ax.fill(angles, values1, 'b', alpha=0.1)
+
+    # Plot data for song 2
+    ax.plot(angles, values2, linewidth=1, linestyle='solid', label=song_data2['track_name'].values[0])
+    ax.fill(angles, values2, 'r', alpha=0.1)
+
+    # Show the plot
+    plt.title("Comparison of Song Attributes")
+    plt.legend(loc='upper right')
+    plt.show()
+
+
+def main(option): #Main File, Running all the Code --> Option Determines what to Output
     # Prompt user to input a track name
     input_valid = False
-    while not input_valid:
+    while not input_valid: #Single Track Name Input
         track_name_input = input("Please enter the track name: ")
         
         # Validate the input track name
@@ -152,12 +176,39 @@ def main(option):
         else:
             input_valid = True
             song_data = get_song_data(track_name_input)
+            
+            
     # Plot spider chart for the valid song data
-    
-    
     if option == 'Spider Chart':
         plot_spider_chart(song_data)
-    else:
+    elif option == 'Compare Songs' or option == 'Compare Songs Text' or option == 'Compare Songs Both': #If we are comparing, get second song data
+        # Get data for second song
+        input_valid = False
+        while not input_valid:
+            track_name_input_2 = input("Please enter the second track name: ")
+            
+            # Validate the input track name
+            if track_name_input_2 not in data['track_name'].values:
+                print("The entered second track name is not present in the dataset. Please try again.")
+            else:
+                input_valid = True
+                song_data_2 = get_song_data(track_name_input_2)
+        
+        if option == 'Compare Songs Text' or option == 'Compare Songs Both': #Interface for Both Songs for Comparison
+            print("--------- Song Data 1 ------- ")
+            time.sleep(1)
+            print(format_song_data(song_data))
+            time.sleep(2)
+            print("--------- Song Data 2 ------- ")
+            time.sleep(1)
+            print(format_song_data(song_data_2))
+            time.sleep(2)
+        if option == 'Compare Songs' or option == 'Compare Songs Both': #If we are not only displaying text, Display the rest
+            plot_compare_spider_chart(song_data, song_data_2)
+            
+        
+    else: #If we are not comparing, display the spider chart and the text
         print(format_song_data(song_data))
         plot_spider_chart(song_data)
+
 
